@@ -21,7 +21,7 @@ class RgriphcdTest extends ScalaTestFrameworkTestKit(AlarmServer, EventServer) w
   }
 
   test("HCD should be locatable using Location Service") {
-    val connection = AkkaConnection(ComponentId(Prefix("wfos.rgripHcd"), ComponentType.HCD))
+    val connection   = AkkaConnection(ComponentId(Prefix("wfos.rgripHcd"), ComponentType.HCD))
     val akkaLocation = Await.result(locationService.resolve(connection, 10.seconds), 10.seconds).get
 
     akkaLocation.connection shouldBe connection

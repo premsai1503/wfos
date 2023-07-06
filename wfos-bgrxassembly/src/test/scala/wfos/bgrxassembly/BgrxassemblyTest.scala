@@ -21,7 +21,7 @@ class BgrxassemblyTest extends ScalaTestFrameworkTestKit(AlarmServer, EventServe
   }
 
   test("Assembly should be locatable using Location Service") {
-    val connection = AkkaConnection(ComponentId(Prefix("wfos.bgrxAssembly"), ComponentType.Assembly))
+    val connection   = AkkaConnection(ComponentId(Prefix("wfos.bgrxAssembly"), ComponentType.Assembly))
     val akkaLocation = Await.result(locationService.resolve(connection, 10.seconds), 10.seconds).get
 
     akkaLocation.connection shouldBe connection
