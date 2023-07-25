@@ -49,3 +49,9 @@ sbt "wfos-wfosdeploy/runMain wfos.wfosdeploy.WfosContainerCmdApp --local ./src/m
 ```
 sbt "wfos-wfosdeploy/runMain wfos.wfosdeploy.WfosContainerCmdApp --local ./src/main/resources/JWfosContainer.conf"
 ```
+
+* Start the HCD and assembly in a container using the Scala implementations:
+
+```
+sbt "wfos-wfosdeploy/runMain wfos.wfosdeploy.WfosContainerCmdApp --local ./src/main/resources/WfosContainer.conf"
+```
