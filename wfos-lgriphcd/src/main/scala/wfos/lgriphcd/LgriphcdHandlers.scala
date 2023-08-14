@@ -1,4 +1,4 @@
-package wfos.rgriphcd
+package wfos.lgriphcd
 
 import akka.actor.typed.scaladsl.ActorContext
 import csw.command.client.messages.TopLevelActorMessage
@@ -13,17 +13,17 @@ import csw.params.core.generics.{Parameter}
 import csw.time.core.models.UTCTime
 
 import scala.concurrent.{ExecutionContextExecutor}
-import wfos.rgriphcd.shared.RgripInfo
+import wfos.lgriphcd.shared.LgripInfo
 
 /**
  * Domain specific logic should be written in below handlers.
  * This handlers gets invoked when component receives messages/commands from other component/entity.
- * For example, if one component sends Submit(Setup(args)) command to Rgriphcd,
+ * For example, if one component sends Submit(Setup(args)) command to Lgriphcd,
  * This will be first validated in the supervisor and then forwarded to Component TLA which first invokes validateCommand hook
  * and if validation is successful, then onSubmit hook gets invoked.
  * You can find more information on this here : https://tmtsoftware.github.io/csw/commons/framework.html
  */
-class RgriphcdHandlers(ctx: ActorContext[TopLevelActorMessage], cswCtx: CswContext) extends ComponentHandlers(ctx, cswCtx) {
+class LgriphcdHandlers(ctx: ActorContext[TopLevelActorMessage], cswCtx: CswContext) extends ComponentHandlers(ctx, cswCtx) {
 
   import cswCtx._
   implicit val ec: ExecutionContextExecutor = ctx.executionContext
@@ -35,20 +35,20 @@ class RgriphcdHandlers(ctx: ActorContext[TopLevelActorMessage], cswCtx: CswConte
     log.info(s"Initializing $prefix")
     log.info(s"Checking if $prefix is at home position")
 
-    log.info(s"${RgripInfo.exchangeAngle.head}, ${RgripInfo.currentAngle.head}")
-    // if (currentAngle.head != RgripInfo.homeAngle.head) {
-    //   log.error("RgripHcd: gripper is not at the exchange position")
+    log.info(s"${LgripInfo.exchangePosition.head}, ${LgripInfo.currentPosition.head}")
+    // if (currentPosition.head != LgripInfo.homePosition.head) {
+    //   log.error("LgripHcd: gripper is not at the exchange position")
 
-    //   val targetAngle: Parameter[Int]    = RgripInfo.targetAngleKey.set(33)
-    //   val gratingMode: Parameter[String] = RgripInfo.gratingModeKey.set("bgid3")
-    //   val cw: Parameter[Int]             = RgripInfo.cwKey.set(6000)
-    //   val sc1: Setup                     = Setup(prefix, CommandName("move"), Some(RgripInfo.obsId)).madd(targetAngle, gratingMode, cw)
+    //   val targetPosition: Parameter[Int]    = LgripInfo.targetPositionKey.set(33)
+    //   val gratingMode: Parameter[String] = LgripInfo.gratingModeKey.set("bgid3")
+    //   val cw: Parameter[Int]             = LgripInfo.cwKey.set(6000)
+    //   val sc1: Setup                     = Setup(prefix, CommandName("move"), Some(LgripInfo.obsId)).madd(targetPosition, gratingMode, cw)
 
     //   val validateResponse = validateCommand(Id(), sc1)
     //   validateResponse match {
     //     case Accepted(runId) => onSubmit(runId, sc1)
     //     case Invalid(runId, commandissue) => {
-    //       log.error("RgripHcd: Validation Failure")
+    //       log.error("LgripHcd: Validation Failure")
     //       // log.info(s"${validateResponse.commandissue}")
     //       log.error(s"$commandissue")
     //       Invalid(runId, commandissue)
@@ -56,51 +56,51 @@ class RgriphcdHandlers(ctx: ActorContext[TopLevelActorMessage], cswCtx: CswConte
     //   }
     // }
     // else {
-    //   log.info("RgripHcd: Gripper is at exchange position")
+    //   log.info("LgripHcd: Gripper is at exchange position")
     // }
   }
 
   override def onLocationTrackingEvent(trackingEvent: TrackingEvent): Unit = {}
 
   override def validateCommand(runId: Id, controlCommand: ControlCommand): ValidateCommandResponse = {
-    log.info(s"RgripHcd: Command - $runId is being validated")
+    log.info(s"LgripHcd: Command - $runId is being validated")
     controlCommand match {
       case setup: Setup => {
-        val targetAngle = setup(RgripInfo.targetAngleKey)
-        if (targetAngle.head != RgripInfo.currentAngle.head) {
+        val targetPosition = setup(LgripInfo.targetPositionKey)
+        if (targetPosition.head != LgripInfo.currentPosition.head) {
           Accepted(runId)
         }
-        else Invalid(runId, ParameterValueOutOfRangeIssue("RgripHcd: Gripper is already at target angle"))
+        else Invalid(runId, ParameterValueOutOfRangeIssue("LgripHcd: Gripper is already at target angle"))
       }
-      case _: Observe => Invalid(runId, UnsupportedCommandIssue("RgripHcd accepts only setup commands"))
+      case _: Observe => Invalid(runId, UnsupportedCommandIssue("LgripHcd accepts only setup commands"))
     }
   }
 
   override def onSubmit(runId: Id, controlCommand: ControlCommand): SubmitResponse = {
-    log.info(s"RgripHcd: handling command: ${controlCommand.commandName} $controlCommand")
+    log.info(s"LgripHcd: handling command: ${controlCommand.commandName} $controlCommand")
     controlCommand match {
       case setup: Setup => onSetup(runId, setup)
-      case _            => Invalid(runId, UnsupportedCommandIssue("RgripHcd: Inavlid Command received"))
+      case _            => Invalid(runId, UnsupportedCommandIssue("LgripHcd: Inavlid Command received"))
     }
   }
 
   private def onSetup(runId: Id, setup: Setup): SubmitResponse = {
 
-    log.info(s"RgripHcd: Executing the received command: $setup")
-    val targetAngle: Parameter[Int] = setup(RgripInfo.targetAngleKey)
-    val delay: Int                  = 1000
-    log.info(s"RgripHcd: Gripper is at ${RgripInfo.currentAngle.head} degrees")
-    if (RgripInfo.currentAngle.head > targetAngle.head) {
-      while (RgripInfo.currentAngle.head != targetAngle.head) {
-        RgripInfo.currentAngle = RgripInfo.currentAngleKey.set(RgripInfo.currentAngle.head - 1)
-        log.info(s"RgripHcd: Rotating gripper to ${RgripInfo.currentAngle.head}")
+    log.info(s"LgripHcd: Executing the received command: $setup")
+    val targetPosition: Parameter[Int] = setup(LgripInfo.targetPositionKey)
+    val delay: Int                     = 1000
+    log.info(s"LgripHcd: Gripper is at ${LgripInfo.currentPosition.head} degrees")
+    if (LgripInfo.currentPosition.head > targetPosition.head) {
+      while (LgripInfo.currentPosition.head != targetPosition.head) {
+        LgripInfo.currentPosition = LgripInfo.currentPositionKey.set(LgripInfo.currentPosition.head - 1)
+        log.info(s"LgripHcd: Moving gripper to ${LgripInfo.currentPosition.head}")
         Thread.sleep(delay)
       }
     }
-    else if (RgripInfo.currentAngle.head < targetAngle.head) {
-      while (RgripInfo.currentAngle.head != targetAngle.head) {
-        RgripInfo.currentAngle = RgripInfo.currentAngleKey.set(RgripInfo.currentAngle.head + 1)
-        log.info(s"RgripHcd: Rotating gripper to ${RgripInfo.currentAngle.head}")
+    else if (LgripInfo.currentPosition.head < targetPosition.head) {
+      while (LgripInfo.currentPosition.head != targetPosition.head) {
+        LgripInfo.currentPosition = LgripInfo.currentPositionKey.set(LgripInfo.currentPosition.head + 1)
+        log.info(s"LgripHcd: Moving gripper to ${LgripInfo.currentPosition.head}")
         Thread.sleep(delay)
       }
     }
@@ -120,4 +120,5 @@ class RgriphcdHandlers(ctx: ActorContext[TopLevelActorMessage], cswCtx: CswConte
   override def onDiagnosticMode(startTime: UTCTime, hint: String): Unit = {}
 
   override def onOperationsMode(): Unit = {}
+
 }

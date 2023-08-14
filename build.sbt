@@ -2,6 +2,7 @@
 lazy val aggregatedProjects: Seq[ProjectReference] = Seq(
   `wfos-bgrxassembly`,
   `wfos-rgriphcd`,
+  `wfos-lgriphcd`,
   `wfos-wfosdeploy`
 )
 
@@ -21,11 +22,18 @@ lazy val `wfos-rgriphcd` = project
     libraryDependencies ++= Dependencies.Rgriphcd
   )
 
+// hcd module
+lazy val `wfos-lgriphcd` = project
+  .settings(
+    libraryDependencies ++= Dependencies.Lgriphcd
+  )
+
 // deploy module
 lazy val `wfos-wfosdeploy` = project
   .dependsOn(
     `wfos-bgrxassembly`,
-    `wfos-rgriphcd`
+    `wfos-rgriphcd`,
+    `wfos-lgriphcd`
   )
   .enablePlugins(CswBuildInfo)
   .settings(

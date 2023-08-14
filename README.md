@@ -44,6 +44,10 @@ Run the container cmd script with arguments. For example:
 sbt "wfos-wfosdeploy/runMain wfos.wfosdeploy.WfosContainerCmdApp --local ./src/main/resources/RgriphcdStandalone.conf"
 ```
 
+```
+sbt "wfos-wfosdeploy/runMain wfos.wfosdeploy.WfosContainerCmdApp --local ./src/main/resources/LgriphcdStandalone.conf"
+```
+
 * Start the HCD and assembly in a container using the Java implementations:
 
 ```
