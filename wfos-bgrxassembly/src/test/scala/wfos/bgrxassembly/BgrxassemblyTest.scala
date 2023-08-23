@@ -17,11 +17,19 @@ class BgrxassemblyTest extends ScalaTestFrameworkTestKit(AlarmServer, EventServe
   override def beforeAll(): Unit = {
     super.beforeAll()
     // uncomment if you want one Assembly run for all tests
-    spawnStandalone(com.typesafe.config.ConfigFactory.load("BgrxassemblyStandalone.conf"))
+    // spawnStandalone(com.typesafe.config.ConfigFactory.load("BgrxassemblyStandalone.conf"))
+    spawnStandalone(com.typesafe.config.ConfigFactory.load("RgriphcdStandalone.conf"))
   }
 
-  test("Assembly should be locatable using Location Service") {
-    val connection   = AkkaConnection(ComponentId(Prefix("wfos.bgrxAssembly"), ComponentType.Assembly))
+  // test("Assembly should be locatable using Location Service") {
+  //   val connection   = AkkaConnection(ComponentId(Prefix("wfos.bgrxAssembly"), ComponentType.Assembly))
+  //   val akkaLocation = Await.result(locationService.resolve(connection, 10.seconds), 10.seconds).get
+
+  //   akkaLocation.connection shouldBe connection
+  // }
+
+  test("Rgrip HCD should be locatable using Location Service") {
+    val connection   = AkkaConnection(ComponentId(Prefix("wfos.rgriphcd"), ComponentType.Assembly))
     val akkaLocation = Await.result(locationService.resolve(connection, 10.seconds), 10.seconds).get
 
     akkaLocation.connection shouldBe connection

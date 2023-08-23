@@ -6,7 +6,7 @@ import csw.framework.models.CswContext
 import csw.framework.scaladsl.ComponentHandlers
 import csw.location.api.models.TrackingEvent
 import csw.params.commands.CommandResponse._
-import csw.params.core.models.{Id, Units}
+import csw.params.core.models.{Id}
 import csw.params.commands.CommandIssue.{ParameterValueOutOfRangeIssue, UnsupportedCommandIssue}
 import csw.params.commands.{ControlCommand, Observe, Setup}
 import csw.params.core.generics.{Parameter}

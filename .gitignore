@@ -1,1 +1,7 @@
 target/
+project/project
+.idea
+**/src/main/java/
+**/src/test/java/
+
+

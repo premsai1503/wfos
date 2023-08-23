@@ -1,8 +1,7 @@
 package wfos.lgriphcd.shared
 
-import csw.params.commands.CommandName
 import csw.params.core.generics.{Key, KeyType, Parameter}
-import csw.params.core.models.{Id, Units, ObsId}
+import csw.params.core.models.{ObsId}
 import csw.prefix.models.Prefix
 
 object LgripInfo {
